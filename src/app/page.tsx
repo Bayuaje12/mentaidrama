@@ -12,7 +12,7 @@ export default function HomePage() {
   // ==========================================
   // 🛠️ SAKLAR MAINTENANCE GLOBAL (EDIT DI SINI)
   // false = WEB LIVE | true = WEB TERKUNCI (MAINTENANCE)
-  const isMaintenance = true; 
+  const isMaintenance = false; 
   // ==========================================
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function HomePage() {
           </p>
           <div className="pt-8">
             <span className="px-8 py-3 border border-primary/20 rounded-full bg-primary/5 text-primary text-[9px] uppercase tracking-[0.4em] font-bold shadow-glow-sm">
-              Back Soon • Indramayu Pride
+              Back Soon • iboyCloud Ganteng
             </span>
           </div>
         </div>
