@@ -134,7 +134,6 @@ export function Header() {
             </div>
           </Link>
 
-          {/* Search Button Only - No Nav Links */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSearchOpen(true)}
@@ -147,7 +146,7 @@ export function Header() {
         </div>
       </div>
 
-      {/* --- SEARCH OVERLAY (Portal) --- */}
+      {/* --- SEARCH OVERLAY --- */}
       {searchOpen &&
         typeof document !== "undefined" &&
         createPortal(
@@ -174,7 +173,6 @@ export function Header() {
                 </button>
               </div>
 
-              {/* Platform indicator */}
               <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
                 <Zap className="w-4 h-4 text-primary fill-primary" />
                 <span>Mencari di:</span>
@@ -183,7 +181,6 @@ export function Header() {
                 </span>
               </div>
 
-              {/* Search Results */}
               <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar pb-10">
                 {isSearching && normalizedQuery && (
                   <div className="flex flex-col items-center justify-center py-20">
@@ -264,17 +261,6 @@ export function Header() {
                                 </span>
                               ))}
                             </div>
-                          )}
-                          {book.book_mark?.text && (
-                            <span
-                              className="inline-block mt-2 px-2 py-0.5 rounded text-[10px] font-bold"
-                              style={{
-                                backgroundColor: book.book_mark.color || "#E52E2E",
-                                color: book.book_mark.text_color || "#FFFFFF",
-                              }}
-                            >
-                              {book.book_mark.text}
-                            </span>
                           )}
                         </div>
                       </Link>
@@ -392,13 +378,6 @@ export function Header() {
                               {book.abstract}
                             </p>
                           )}
-                          {book.stat_infos && book.stat_infos.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                               <span className="tag-pill text-[10px] bg-primary/20 text-primary border border-primary/20">
-                                  {book.stat_infos[0]}
-                               </span>
-                            </div>
-                          )}
                         </div>
                       </Link>
                     ))}
@@ -429,15 +408,6 @@ export function Header() {
                             <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
                               {book.introduce}
                             </p>
-                          )}
-                          {book.tag_list && book.tag_list.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                              {book.tag_list.slice(0, 3).map((tag: any, idx: number) => (
-                                <span key={idx} className="tag-pill text-[10px] bg-primary/20 text-primary border border-primary/20">
-                                  {tag.tag_name}
-                                </span>
-                              ))}
-                            </div>
                           )}
                         </div>
                       </Link>
@@ -470,22 +440,14 @@ export function Header() {
                               {book.desc}
                             </p>
                           )}
-                          {book.content_tags && book.content_tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                              {book.content_tags.slice(0, 3).map((tag: string, idx: number) => (
-                                <span key={idx} className="tag-pill text-[10px] bg-primary/20 text-primary border border-primary/20">
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
                         </div>
                       </Link>
                     ))}
                   </div>
                 )}
 
-                {searchResults && searchResults.length === 0 && normalizedQuery && !isLoading && (
+                {/* INI BAGIAN YANG DIPERBAIKI (Baris 488) */}
+                {searchResults && searchResults.length === 0 && normalizedQuery && !isSearching && (
                   <div className="text-center py-20 bg-white/5 rounded-3xl border border-dashed border-white/10 mt-8">
                     <p className="text-white/60 text-lg italic">Drama "{normalizedQuery}" belum tersedia di {platformInfo.name}.</p>
                   </div>
