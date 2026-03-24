@@ -2,54 +2,44 @@
 
 import { Suspense, useState, useEffect } from "react";
 import HomeContent from "./home-content";
-import Image from "next/image"; // Menggunakan komponen Image Next.js untuk optimasi
+import Image from "next/image";
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [showDonation, setShowDonation] = useState(false);
   const [timeLeft, setTimeLeft] = useState(10);
-  const [canSkip, setCanSkip] = useState(false);
 
-  // EFek 1: SPLASH SCREEN (Tampilan Pertama)
+  // 1. LOGIKA SPLASH SCREEN (Logo Favicon Muncul 3 Detik)
   useEffect(() => {
-    // Tampilkan logo favicon selama 3 detik
     const splashTimer = setTimeout(() => {
       setLoading(false);
-      setShowDonation(true); // Tampilkan donasi setelah loading logo selesai
+      setShowDonation(true);
     }, 3000); 
-
     return () => clearTimeout(splashTimer);
   }, []);
 
-  // EFek 2: TIMER DONASI (Logika Skip Tepat Detik ke-8)
+  // 2. LOGIKA TIMER MUNDUR (Berjalan di Background)
   useEffect(() => {
-    // Hanya jalan jika loading logo selesai dan modal donasi aktif
-    if (timeLeft > 0 && showDonation && !loading) {
-      const donationTimer = setTimeout(() => {
-        const nextTime = timeLeft - 1;
-        setTimeLeft(nextTime);
-
-        // PERBAIKAN: Tombol skip muncul TEPAT ketika detik berjalan ke-8 (sisa 2 detik)
-        if (nextTime <= 2) {
-          setCanSkip(true);
-        }
+    if (showDonation && !loading && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
       }, 1000);
-      return () => clearTimeout(donationTimer);
+      return () => clearInterval(timer);
     }
-  }, [timeLeft, showDonation, loading]);
+  }, [showDonation, loading, timeLeft]);
 
   return (
-    <main className="relative min-h-screen overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden bg-black">
       
-      {/* --- 1. ANIMASI LOADING LOGO ASLI (SPLASH SCREEN) --- */}
+      {/* --- LAYER 1: SPLASH SCREEN (LOGO ASLI) --- */}
       {loading && (
-        <div className="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-black animate-out fade-out duration-1000 delay-[2500ms]">
-          <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-700">
+        <div className="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-black animate-in fade-in duration-500">
+          <div className="flex flex-col items-center gap-6">
             
-            {/* MENGGUNAKAN FAVICON.ICO DARI FOLDER PUBLIC */}
-            <div className="relative w-24 h-24 animate-logo-pulse p-2 rounded-3xl bg-black shadow-[0_0_60px_rgba(212,175,55,0.2)] border border-primary/20">
+            {/* Logo Favicon dari folder Public */}
+            <div className="relative w-28 h-28 animate-pulse p-3 rounded-[2rem] bg-black shadow-[0_0_50px_rgba(212,175,55,0.15)] border border-primary/10">
               <Image 
-                src="/favicon.ico" // Path langsung ke folder public
+                src="/favicon.ico" 
                 alt="Logo MentaiDrama" 
                 fill
                 className="object-contain"
@@ -57,64 +47,82 @@ export default function HomePage() {
               />
             </div>
 
-            {/* TEKS BRANDING */}
-            <div className="text-center">
-                <h1 className="font-display font-black text-4xl italic gradient-text tracking-tighter uppercase">
+            <div className="text-center space-y-2">
+                <h1 className="font-display font-black text-4xl italic gradient-text tracking-tighter uppercase animate-in slide-in-from-bottom-4 duration-700">
                   Mentai<span className="text-white">Drama</span>
                 </h1>
-                <p className="text-[10px] text-white/40 uppercase tracking-[0.5em] mt-2 font-medium">PREMIUM EXPERIENCE</p>
+                <div className="h-[1px] w-12 bg-primary/30 mx-auto" />
+                <p className="text-[10px] text-white/30 uppercase tracking-[0.6em] font-medium">
+                  Premium Experience
+                </p>
             </div>
           </div>
         </div>
       )}
 
-      {/* --- 2. KONTEN UTAMA WEBSITE (Muncul di Background) --- */}
-      <Suspense fallback={null}>
+      {/* --- LAYER 2: KONTEN UTAMA WEBSITE --- */}
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center bg-black">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        </div>
+      }>
         <HomeContent />
       </Suspense>
 
-      {/* --- 3. MODAL DONASI (Muncul Setelah Splash Screen) --- */}
+      {/* --- LAYER 3: MODAL DONASI (POPUP) --- */}
       {showDonation && !loading && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 animate-in fade-in duration-500">
-          <div className="bg-[#0a0a0a] border border-primary/30 p-8 rounded-[2.5rem] max-w-sm w-full text-center shadow-[0_0_60px_rgba(212,175,55,0.15)] relative">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md p-6 animate-in fade-in duration-500">
+          <div className="bg-[#0c0c0c] border border-white/5 p-8 rounded-[3rem] max-w-sm w-full text-center shadow-[0_0_80px_rgba(0,0,0,1)] relative overflow-hidden group">
             
-            {/* TOMBOL SKIP MUNCUL TEPAT DI DETIK KE-8 */}
-            {canSkip && (
-              <button 
-                onClick={() => setShowDonation(false)}
-                className="absolute top-6 right-8 text-primary font-bold text-[10px] uppercase tracking-[0.3em] hover:scale-110 transition-transform animate-in zoom-in duration-300 shadow-glow-sm"
-              >
-                Skip ✕
-              </button>
-            )}
-
-            <h2 className="text-2xl font-black italic text-white mb-2 tracking-tighter uppercase">
-              SUPPORT <span className="gradient-text">IBOYCLOUD</span>
-            </h2>
-            <p className="text-[11px] text-white/50 mb-6 leading-relaxed uppercase tracking-tighter">
-              Bantu kami menjaga server tetap stabil.
-            </p>
+            {/* Efek Cahaya di Belakang Modal */}
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
             
-            {/* FOTO QRIS DONASI (Gunakan Link Catbox kamu) */}
-            <div className="relative w-64 h-64 mx-auto mb-6 bg-white rounded-2xl overflow-hidden p-2 border-4 border-primary/30 shadow-2xl">
-              <img 
-                src="https://files.catbox.moe/fcn9de.png" 
-                alt="QRIS Donasi iboyCloud" 
-                className="w-full h-full object-contain" 
-              />
-            </div>
-
-            <button
-              disabled={timeLeft > 0}
+            {/* TOMBOL SKIP: LANGSUNG MUNCUL (Tanpa nunggu) */}
+            <button 
               onClick={() => setShowDonation(false)}
-              className={`w-full py-4 rounded-xl font-black uppercase tracking-[0.2em] transition-all duration-300 ${
-                timeLeft > 0 
-                ? "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed" 
-                : "bg-primary text-black hover:scale-105 active:scale-95 shadow-[0_0_25px_rgba(212,175,55,0.4)]"
-              }`}
+              className="absolute top-8 right-8 text-primary/60 hover:text-primary font-bold text-[11px] uppercase tracking-[0.2em] transition-all hover:scale-110 active:scale-95 z-10"
             >
-              {timeLeft > 0 ? `TUNGGU ${timeLeft} DETIK...` : "MASUK WEBSITE"}
+              Skip ✕
             </button>
+
+            <div className="relative z-10">
+              <h2 className="text-2xl font-black italic text-white mb-1 tracking-tighter uppercase">
+                SUPPORT <span className="gradient-text">IBOYCLOUD</span>
+              </h2>
+              <p className="text-[10px] text-white/40 mb-8 uppercase tracking-widest font-medium">
+                Keep the server alive
+              </p>
+              
+              {/* Box QRIS Donasi */}
+              <div className="relative w-64 h-64 mx-auto mb-8 bg-white rounded-[2rem] overflow-hidden p-3 border-[6px] border-[#1a1a1a] shadow-2xl transition-transform group-hover:scale-[1.02] duration-500">
+                <img 
+                  src="https://files.catbox.moe/fcn9de.png" 
+                  alt="QRIS iboyCloud" 
+                  className="w-full h-full object-contain" 
+                />
+              </div>
+
+              {/* Tombol Masuk dengan Timer */}
+              <button
+                disabled={timeLeft > 0}
+                onClick={() => setShowDonation(false)}
+                className={`w-full py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[12px] transition-all duration-500 ${
+                  timeLeft > 0 
+                  ? "bg-white/[0.03] text-white/10 border border-white/[0.05] cursor-not-allowed" 
+                  : "bg-primary text-black shadow-[0_20px_40px_rgba(212,175,55,0.2)] hover:bg-white hover:shadow-glow-sm"
+                }`}
+              >
+                {timeLeft > 0 ? (
+                  <span className="flex items-center justify-center gap-2">
+                    Tunggu {timeLeft}s
+                  </span>
+                ) : "Masuk Sekarang"}
+              </button>
+              
+              <p className="mt-6 text-[9px] text-white/20 uppercase tracking-[0.3em]">
+                Your support means everything ❤️
+              </p>
+            </div>
           </div>
         </div>
       )}
