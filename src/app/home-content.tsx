@@ -15,24 +15,26 @@ import { InfiniteDramaSection } from "@/components/InfiniteDramaSection";
 export default function HomeContent() {
   const { isDramaBox, isReelShort, isShortMax, isNetShort, isMelolo, isFlickReels, isFreeReels } = usePlatform();
 
-  // Fetch data for all DramaBox sections
-  // const { data: popularDramas, isLoading: loadingPopular, error: errorPopular, refetch: refetchPopular } = useForYouDramas(); // REMOVED as requested (replaced by infinite scroll)
+  // Fetch data hooks
   const { data: latestDramas, isLoading: loadingLatest, error: errorLatest, refetch: refetchLatest } = useLatestDramas();
   const { data: trendingDramas, isLoading: loadingTrending, error: errorTrending, refetch: refetchTrending } = useTrendingDramas();
   const { data: dubindoDramas, isLoading: loadingDubindo, error: errorDubindo, refetch: refetchDubindo } = useDubindoDramas();
 
   return (
-    <main className="min-h-screen pt-16">
-      {/* Platform Selector */}
-      <div className="glass-strong sticky top-16 z-40">
+    <main className="min-h-screen pb-20">
+      {/* Platform Selector - FIXED 
+          Diberi z-30 agar berada di bawah Header (z-500) tapi di atas konten.
+          Top-20 disesuaikan agar pas di bawah header saat di-scroll.
+      */}
+      <div className="sticky top-[72px] z-30 bg-black/60 backdrop-blur-xl border-b border-white/5 shadow-2xl">
         <div className="container mx-auto">
           <PlatformSelector />
         </div>
       </div>
 
-      {/* DramaBox Content - Multiple Sections */}
+      {/* Konten DramaBox */}
       {isDramaBox && (
-        <div className="container mx-auto px-4 py-6 space-y-8">
+        <div className="container mx-auto px-4 py-8 space-y-12 relative z-10">
           <DramaSection
             title="Terbaru"
             dramas={latestDramas}
@@ -40,6 +42,7 @@ export default function HomeContent() {
             error={!!errorLatest}
             onRetry={() => refetchLatest()}
           />
+          
           <DramaSection
             title="Terpopuler"
             dramas={trendingDramas}
@@ -47,6 +50,7 @@ export default function HomeContent() {
             error={!!errorTrending}
             onRetry={() => refetchTrending()}
           />
+
           <DramaSection
             title="Dubindo"
             dramas={dubindoDramas}
@@ -56,52 +60,50 @@ export default function HomeContent() {
           />
 
           {/* Infinite Scroll Section */}
-          <InfiniteDramaSection title="Lainnya" />
+          <div className="pt-4 border-t border-white/5">
+             <InfiniteDramaSection title="Lainnya Untuk Kamu" />
+          </div>
         </div>
       )}
 
-      {/* ReelShort Content - Multiple Sections */}
-      {isReelShort && (
-        <div className="container mx-auto px-4 py-6 space-y-8">
-          <ReelShortSection />
-        </div>
-      )}
+      {/* Render Platform Lainnya */}
+      <div className="relative z-10">
+        {isReelShort && (
+          <div className="container mx-auto px-4 py-6 space-y-8">
+            <ReelShortSection />
+          </div>
+        )}
 
-      {/* ShortMax Content */}
-      {isShortMax && (
-        <div className="container mx-auto px-4 py-6 space-y-8">
-          <ShortMaxHome />
-        </div>
-      )}
+        {isShortMax && (
+          <div className="container mx-auto px-4 py-6 space-y-8">
+            <ShortMaxHome />
+          </div>
+        )}
 
-      {/* NetShort Content */}
-      {isNetShort && (
-        <div className="container mx-auto px-4 py-6 space-y-8">
-          <NetShortHome />
-        </div>
-      )}
+        {isNetShort && (
+          <div className="container mx-auto px-4 py-6 space-y-8">
+            <NetShortHome />
+          </div>
+        )}
 
-      {/* Melolo Content */}
-      {isMelolo && (
-        <div className="container mx-auto px-4 py-6 space-y-8">
-          <MeloloHome />
-        </div>
-      )}
+        {isMelolo && (
+          <div className="container mx-auto px-4 py-6 space-y-8">
+            <MeloloHome />
+          </div>
+        )}
 
-      {/* FlickReels Content */}
-      {isFlickReels && (
-        <div className="container mx-auto px-4 py-6 space-y-8">
-          <FlickReelsHome />
-        </div>
-      )}
+        {isFlickReels && (
+          <div className="container mx-auto px-4 py-6 space-y-8">
+            <FlickReelsHome />
+          </div>
+        )}
 
-      {/* FreeReels Content */}
-      {isFreeReels && (
-        <div className="container mx-auto px-4 py-6 space-y-8">
-          <FreeReelsHome />
-        </div>
-      )}
+        {isFreeReels && (
+          <div className="container mx-auto px-4 py-6 space-y-8">
+            <FreeReelsHome />
+          </div>
+        )}
+      </div>
     </main>
   );
 }
-
